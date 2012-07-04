@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # vim: et ts=2 sw=2
 
+require "haml"
 require "set"
 require "date"
 require "health_graph"
@@ -27,7 +28,7 @@ get "/" do
     feed = feed.next_page
   end
 
-  "bla"
+  haml :index, :format => :html5
 end
 
 get "/auth" do
