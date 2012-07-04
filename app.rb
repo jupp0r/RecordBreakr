@@ -17,6 +17,17 @@ get "/" do
   redirect "/auth" unless token
 
   user = HealthGraph::User.new token
+
+  feed = user.fitness_activities
+
+  @fitness_items = []
+
+  while feed
+    @fitness_items += feed.items
+    feed = feed.next_page
+  end
+
+  "bla"
 end
 
 get "/auth" do
