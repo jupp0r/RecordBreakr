@@ -1,6 +1,20 @@
 %table
   %tr
+    %th start time
     %th duration
-  - @fitness_items.each do |item|
+    %th distance
+    %th avg pace
+    - @records.each_key do |distance|
+      %th #{distance} time
+      %th #{distance} start
+      %th #{distance} stop
+  - @activities.each do |activity|
     %tr
-      %td= item.duration
+      %td= activity.start_time
+      %td= format_duration activity.duration
+      %td= format_distance activity.total_distance
+      %td= format_duration(calculate_average_pace activity.total_distance, activity.duration)
+      - @records.each_value do |record|
+        %td= format_duration record[activity][:time] unless record[activity].nil?
+        %td= format_duration record[activity][:start] unless record[activity].nil?
+        %td= format_duration record[activity][:stop] unless record[activity].nil?
