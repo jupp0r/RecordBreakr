@@ -74,6 +74,7 @@ helpers do
 end
 
 get "/" do
+  @distances = [1000, 5000, 10000, 210974, 42195]
   token = request.cookies["token"]
   redirect "/auth" unless token
 
@@ -95,11 +96,29 @@ get "/" do
   end
 
   @records = Hash.new
-
-  [1000, 5000, 10000, 210974, 42195].each do |distance|
+  @distances.each do |distance|
     @records[distance] = Hash.new
     @activities.each do |activity|
       @records[distance][activity] = calculate_fastest_distance distance, activity
+    end
+    @records[distance] = @records[distance].sort_by do |activity, result|
+      unless result.nil?
+        result[:time]
+      else
+        Float::INFINITY
+      end
+    end
+    @records[distance] = Hash[@records[distance]]
+  end
+
+  @topten = []
+  10.times {@topten.push Hash.new}
+  @distances.each do |distance|
+    (0..9).each do |i|
+      if @records[distance].size > i
+        topten_item = @records[distance].keys[i]
+        @topten[i][distance] = {:activity => topten_item, :record => @records[distance][topten_item]}
+      end
     end
   end
 

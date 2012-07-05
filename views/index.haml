@@ -1,20 +1,14 @@
 %table
   %tr
-    %th start time
-    %th duration
-    %th distance
-    %th avg pace
+    %th
     - @records.each_key do |distance|
-      %th #{distance} time
-      %th #{distance} start
-      %th #{distance} stop
-  - @activities.each do |activity|
+      %th #{format_distance distance}
+  - @topten.each_with_index do |topten_place, i|
     %tr
-      %td= activity.start_time
-      %td= format_duration activity.duration
-      %td= format_distance activity.total_distance
-      %td= format_duration(calculate_average_pace activity.total_distance, activity.duration)
-      - @records.each_value do |record|
-        %td= format_duration record[activity][:time] unless record[activity].nil?
-        %td= format_duration record[activity][:start] unless record[activity].nil?
-        %td= format_duration record[activity][:stop] unless record[activity].nil?
+      %td #{i+1}.    
+      - topten_place.each_value do |place|
+        %td
+          - unless place[:record].nil?
+            %a{:href => place[:activity].activity}= format_duration place[:record][:time]
+          - else
+            x
