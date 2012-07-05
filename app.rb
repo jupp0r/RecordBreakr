@@ -74,7 +74,7 @@ helpers do
 end
 
 get "/" do
-  @distances = [1000, 5000, 10000, 210974, 42195]
+  @distances = [1000, 5000, 10000, 21097, 42195]
   token = request.cookies["token"]
   redirect "/auth" unless token
 
