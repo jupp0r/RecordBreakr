@@ -15,11 +15,6 @@ end
 
 helpers do
   def calculate_fastest_distance target_distance, fitness_activity
-    #assuming sorted distance map here
-    #fitness_activity.distance.map! do |point|
-    #  point.timestamp = point.timestamp.to_f
-    #  point.distance = point.distance.to_f
-    #end
     return nil unless target_distance < fitness_activity.distance.last.distance
     fastest_race_time = Float::INFINITY
     fastest_race_start = 0.0
