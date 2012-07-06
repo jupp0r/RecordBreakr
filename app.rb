@@ -17,35 +17,6 @@ HealthGraph.configure do |config|
 end
 
 helpers do
-  def calculate_fastest_distance target_distance, distance_vector
-    return nil unless target_distance < distance_vector.last.distance
-    fastest_race_time = Float::INFINITY
-    fastest_race_start = 0.0
-    fastest_race_stop = 0.0
-    distance_vector.each do |start_point|
-      last_end_point = start_point
-      distance_vector.each do |end_point|
-        if start_point.timestamp < end_point.timestamp
-          distance_start_to_end = end_point.distance - start_point.distance
-          if target_distance <= distance_start_to_end
-            # linear interpolation of intermediate time
-            error_distance = distance_start_to_end - target_distance
-            diff_time = end_point.timestamp - last_end_point.timestamp
-            diff_distance = end_point.distance - last_end_point.distance
-            stop_time = last_end_point.timestamp + diff_time*(diff_distance/error_distance)
-            current_race_time =  stop_time - start_point.timestamp
-            fastest_race_time = current_race_time if current_race_time < fastest_race_time
-            fastest_race_start = start_point.timestamp
-            fastest_race_stop = stop_time
-            break
-          end
-        end
-        last_end_point = end_point
-      end
-    end
-    {:time => fastest_race_time, :start => fastest_race_start, :stop => fastest_race_stop}
-  end
-
   def parse_duration duration_in_s
     duration_in_s = (duration_in_s+0.5).to_i
     hours = duration_in_s/3600
@@ -103,7 +74,13 @@ get "/" do
   @distances.each do |distance|
     @records[distance] = Hash.new
     @activities.each do |activity|
-      @records[distance][activity] = calculate_fastest_distance distance, activity.distance
+      record_hash = redis.hget "Activities:#{activity.uri}:record:#{distance}"
+      unless record_hash.nil?
+        @records[distance][activity] = record_hash[distance]
+      else
+        # TODO(jupp0r): trigger job start here
+        @records[distance][activity] = nil
+      end
     end
     @records[distance] = @records[distance].sort_by do |activity, result|
       unless result.nil?
