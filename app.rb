@@ -6,6 +6,9 @@ require "set"
 require "date"
 require "health_graph"
 require "sinatra"
+require "redis"
+
+redis = Redis.new
 
 HealthGraph.configure do |config|
   config.client_id = ENV["CLIENT_ID"]
@@ -14,14 +17,14 @@ HealthGraph.configure do |config|
 end
 
 helpers do
-  def calculate_fastest_distance target_distance, fitness_activity
-    return nil unless target_distance < fitness_activity.distance.last.distance
+  def calculate_fastest_distance target_distance, distance_vector
+    return nil unless target_distance < distance_vector.last.distance
     fastest_race_time = Float::INFINITY
     fastest_race_start = 0.0
     fastest_race_stop = 0.0
-    fitness_activity.distance.each do |start_point|
+    distance_vector.each do |start_point|
       last_end_point = start_point
-      fitness_activity.distance.each do |end_point|
+      distance_vector.each do |end_point|
         if start_point.timestamp < end_point.timestamp
           distance_start_to_end = end_point.distance - start_point.distance
           if target_distance <= distance_start_to_end
@@ -75,6 +78,12 @@ get "/" do
 
   user = HealthGraph::User.new token
 
+  @uid = user.userID
+
+  #store user in user list
+
+  redis.sadd "Users:all", @uid
+
   feed = user.fitness_activities
 
   @fitness_items = []
@@ -94,7 +103,7 @@ get "/" do
   @distances.each do |distance|
     @records[distance] = Hash.new
     @activities.each do |activity|
-      @records[distance][activity] = calculate_fastest_distance distance, activity
+      @records[distance][activity] = calculate_fastest_distance distance, activity.distance
     end
     @records[distance] = @records[distance].sort_by do |activity, result|
       unless result.nil?
