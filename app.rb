@@ -61,10 +61,8 @@ helpers do
         # TODO: somehow inform someone that activity is still being
         # analyzed
       else
-        retrieved_item = fitness_item.item
-        job_id = Analyzer.create(:distances => distances, :distance_vector => retrieved_item.distance, :activity_uri => fitness_item.uri, :user => user.userID)
+        job_id = Analyzer.create(:distances => distances, :token => token, :activity_uri => fitness_item.uri)
         redis.sadd "Users:#{user.userID}:running_jobs", job_id
-        redis.setnx  "Activities:#{fitness_item.uri}:url", retrieved_item.activity
       end
     end
 
