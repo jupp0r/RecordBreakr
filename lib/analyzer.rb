@@ -1,17 +1,33 @@
 require "resque-status"
+require "health_graph"
 
 class Analyzer
   include Resque::Plugins::Status
 
   def perform
+    HealthGraph.configure do |config|
+      config.client_id = ENV["CLIENT_ID"]
+      config.client_secret = ENV["CLIENT_SECRET"]
+      config.authorization_redirect_url = ENV["REDIRECT_URL"]
+    end
+
     job_id = @uuid
     redis = Redis.new
+    @token = options["token"]
     @distances = options["distances"]
-    @distance_vector = options["distance_vector"]
+
+
+    health_graph_user = HealthGraph::User.new @token
+
+    @user = health_graph_user.userID
     @activity_uri = options["activity_uri"]
-    @user = options["user"]
 
     redis.sadd "Users:#{@user}:analyzing_activities", @activity_uri
+
+    activity = HealthGraph::FitnessActivity.new @token, "uri" => @activity_uri
+    @distance_vector = activity.distance
+
+    redis.setnx  "Activities:#{@activity_uri}:url", activity.activity
 
     @distances.each do |distance|
       record = calculate_fastest_distance distance, @distance_vector
