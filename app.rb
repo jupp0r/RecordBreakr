@@ -2,6 +2,7 @@
 # vim: et ts=2 sw=2
 
 require "haml"
+require "sass"
 require "set"
 require "date"
 require "health_graph"
@@ -110,20 +111,6 @@ get "/" do
 
   @records = retrieve_records token, user, @fitness_items, @distances
 
-  # @records = Hash.new
-  # @distances.each do |distance|
-  #   @records[distance] = Hash.new
-  #   @activities.each do |activity|
-  #     record_hash = redis.hget "Activities:#{activity.uri}:record:#{distance}"
-  #     unless record_hash.nil?
-  #       @records[distance][activity] = record_hash[distance]
-  #     else
-  #       # TODO(jupp0r): trigger job start here
-  #       @records[distance][activity] = nil
-  #     end
-  #   end
-  # end
-
   @topten = []
   10.times {@topten.push Hash.new}
   @distances.each do |distance|
@@ -150,7 +137,15 @@ get "/progress" do
   incomplete_items = redis.smembers("Users:#{@uid}:analyzing_activities").size
   complete_items = redis.smembers("Users:#{@uid}:analyzed_activities").size
 
-  {"complete" => complete_items, "incomplete" => incomplete_items}
+  {:complete => complete_items, :incomplete => incomplete_items}.to_json
+end
+
+get "/refresh" do
+  token = request.cookies["token"]
+  user = HealthGraph::User.new token
+  redis = Redis.new
+  redis.del "Users:#{user.userID}:analyzed_activities"
+  redirect "/"
 end
 
 get "/auth" do
@@ -161,4 +156,14 @@ get "/callback" do
   token = HealthGraph.access_token params[:code]
   response.set_cookie "token", token
   redirect "/"
+end
+
+get "/ui.css" do
+  content_type "text/css"
+  scss :ui
+end
+
+get '/ui.js' do
+  content_type "text/javascript"
+  coffee :ui
 end
