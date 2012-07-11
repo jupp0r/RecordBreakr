@@ -1,3 +1,6 @@
+- unless @processing.empty?
+  Analyzing #{@processing.size} activities
+
 %table
   %tr
     %th
@@ -8,8 +11,8 @@
       %td #{i+1}.    
       - topten_place.each_value do |place|
         %td
-          - unless place[:record].nil? or place[:record][:time].nil?
+          - if not place[:record].nil? and not place[:record][:time].nil?
             %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
           - else
             x
-          
+        

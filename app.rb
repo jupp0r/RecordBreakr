@@ -7,6 +7,7 @@ require "date"
 require "health_graph"
 require "sinatra"
 require "redis"
+require "json"
 
 require "./lib/analyzer"
 
@@ -58,9 +59,9 @@ helpers do
           @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
         end
       elsif redis.sismember "Users:#{user.userID}:analyzing_activities", fitness_item.uri
-        # TODO: somehow inform someone that activity is still being
-        # analyzed
+        @processing.push fitness_item.uri
       else
+        redis.sadd "Users:#{user.userID}:analyzing_activities", fitness_item.uri
         job_id = Analyzer.create(:distances => distances, :token => token, :activity_uri => fitness_item.uri)
         redis.sadd "Users:#{user.userID}:running_jobs", job_id
       end
@@ -98,6 +99,8 @@ get "/" do
 
   @fitness_items = []
 
+  @processing = []
+
   while feed
     @fitness_items += feed.items
     feed = feed.next_page
@@ -133,6 +136,21 @@ get "/" do
   end
 
   haml :index, :format => :html5
+end
+
+get "/progress" do
+  content_type :json
+  token = request.cookies["token"]
+  user = HealthGraph::User.new token
+
+  @uid = user.userID
+
+  redis = Redis.new
+
+  incomplete_items = redis.smembers("Users:#{@uid}:analyzing_activities").size
+  complete_items = redis.smembers("Users:#{@uid}:analyzed_activities").size
+
+  {"complete" => complete_items, "incomplete" => incomplete_items}
 end
 
 get "/auth" do

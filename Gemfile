@@ -10,6 +10,7 @@ gem "sass", "~> 3.1.20"
 gem "haml", "~> 3.1.6"
 gem "coffee-script", "~> 2.2.0"
 gem "health_graph", :path => "../health_graph"
+gem "json", "~> 1.7.3"
 
 gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"

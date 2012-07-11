@@ -22,8 +22,6 @@ class Analyzer
     @user = health_graph_user.userID
     @activity_uri = options["activity_uri"]
 
-    redis.sadd "Users:#{@user}:analyzing_activities", @activity_uri
-
     activity = HealthGraph::FitnessActivity.new @token, "uri" => @activity_uri
     @distance_vector = activity.distance
 
