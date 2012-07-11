@@ -8,7 +8,8 @@
       %td #{i+1}.    
       - topten_place.each_value do |place|
         %td
-          - unless place[:record].nil?
-            %a{:href => place[:activity].activity}= format_duration place[:record][:time]
+          - unless place[:record].nil? or place[:record][:time].nil?
+            %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
           - else
             x
+          

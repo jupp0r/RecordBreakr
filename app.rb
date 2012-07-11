@@ -6,6 +6,11 @@ require "set"
 require "date"
 require "health_graph"
 require "sinatra"
+require "redis"
+
+require "./lib/analyzer"
+
+redis = Redis.new
 
 HealthGraph.configure do |config|
   config.client_id = ENV["CLIENT_ID"]
@@ -14,35 +19,6 @@ HealthGraph.configure do |config|
 end
 
 helpers do
-  def calculate_fastest_distance target_distance, fitness_activity
-    return nil unless target_distance < fitness_activity.distance.last.distance
-    fastest_race_time = Float::INFINITY
-    fastest_race_start = 0.0
-    fastest_race_stop = 0.0
-    fitness_activity.distance.each do |start_point|
-      last_end_point = start_point
-      fitness_activity.distance.each do |end_point|
-        if start_point.timestamp < end_point.timestamp
-          distance_start_to_end = end_point.distance - start_point.distance
-          if target_distance <= distance_start_to_end
-            # linear interpolation of intermediate time
-            error_distance = distance_start_to_end - target_distance
-            diff_time = end_point.timestamp - last_end_point.timestamp
-            diff_distance = end_point.distance - last_end_point.distance
-            stop_time = last_end_point.timestamp + diff_time*(diff_distance/error_distance)
-            current_race_time =  stop_time - start_point.timestamp
-            fastest_race_time = current_race_time if current_race_time < fastest_race_time
-            fastest_race_start = start_point.timestamp
-            fastest_race_stop = stop_time
-            break
-          end
-        end
-        last_end_point = end_point
-      end
-    end
-    {:time => fastest_race_time, :start => fastest_race_start, :stop => fastest_race_stop}
-  end
-
   def parse_duration duration_in_s
     duration_in_s = (duration_in_s+0.5).to_i
     hours = duration_in_s/3600
@@ -66,6 +42,43 @@ helpers do
   def calculate_average_pace total_distance, duration
     duration*1000/total_distance
   end
+
+  def retrieve_records token, user, activities, distances
+    redis = Redis.new
+    records = Hash.new
+
+    distances.each do |distance|
+      records[distance] = Hash.new
+    end
+
+    @fitness_items.each do |fitness_item|
+      if redis.sismember "Users:#{user.userID}:analyzed_activities", fitness_item.uri
+        distances.each do |distance|
+          records[distance][fitness_item.uri] = Hash[redis.hgetall("Activities:#{fitness_item.uri}:record:#{distance}").map{|(k,v)| [k.to_sym,v.to_f]}]
+          @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
+        end
+      elsif redis.sismember "Users:#{user.userID}:analyzing_activities", fitness_item.uri
+        # TODO: somehow inform someone that activity is still being
+        # analyzed
+      else
+        job_id = Analyzer.create(:distances => distances, :token => token, :activity_uri => fitness_item.uri)
+        redis.sadd "Users:#{user.userID}:running_jobs", job_id
+      end
+    end
+
+    #sort distances
+    records.each_key do |distance|
+      records[distance] = records[distance].sort_by do |activity_uri, result|
+        unless result.nil? or result[:time].nil? or result.empty?
+          result[:time]
+        else
+          Float::INFINITY
+        end
+      end
+      records[distance] = Hash[records[distance]]
+    end
+    records
+  end
 end
 
 get "/" do
@@ -74,6 +87,12 @@ get "/" do
   redirect "/auth" unless token
 
   user = HealthGraph::User.new token
+
+  @uid = user.userID
+
+  #store user in user list
+
+  redis.sadd "Users:all", @uid
 
   feed = user.fitness_activities
 
@@ -84,27 +103,23 @@ get "/" do
     feed = feed.next_page
   end
 
-  @activities = []
+  @urls = Hash.new
 
-  @fitness_items.each do |fitness_item|
-    @activities.push fitness_item.item
-  end
+  @records = retrieve_records token, user, @fitness_items, @distances
 
-  @records = Hash.new
-  @distances.each do |distance|
-    @records[distance] = Hash.new
-    @activities.each do |activity|
-      @records[distance][activity] = calculate_fastest_distance distance, activity
-    end
-    @records[distance] = @records[distance].sort_by do |activity, result|
-      unless result.nil?
-        result[:time]
-      else
-        Float::INFINITY
-      end
-    end
-    @records[distance] = Hash[@records[distance]]
-  end
+  # @records = Hash.new
+  # @distances.each do |distance|
+  #   @records[distance] = Hash.new
+  #   @activities.each do |activity|
+  #     record_hash = redis.hget "Activities:#{activity.uri}:record:#{distance}"
+  #     unless record_hash.nil?
+  #       @records[distance][activity] = record_hash[distance]
+  #     else
+  #       # TODO(jupp0r): trigger job start here
+  #       @records[distance][activity] = nil
+  #     end
+  #   end
+  # end
 
   @topten = []
   10.times {@topten.push Hash.new}
