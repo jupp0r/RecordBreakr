@@ -103,6 +103,7 @@ get "/" do
   @processing = []
 
   while feed
+    break if feed.items.nil? or feed.next_page.nil?
     @fitness_items += feed.items
     feed = feed.next_page
   end
