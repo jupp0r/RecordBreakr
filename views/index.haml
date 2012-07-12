@@ -5,7 +5,8 @@
     %link{"rel" => "stylesheet", "href" => "ui.css", "type" => "text/css"}
   %body
     .status
-      %progress#statusbar{:value => "", :max => ""}
+      .status-heading Analyzing activities ...      
+      %progress#statusbar{:value => "", :max => ""}      
     %table.topten
       %tr
         %th
@@ -18,7 +19,9 @@
             %td
               - if not place[:record].nil? and not place[:record][:time].nil?
                 %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
-
+    .settings
+      %a{:href => "/refresh"} refresh records
     %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"}
+    %script{:src => "http://malsup.github.com/jquery.blockUI.js"}
     %script{:src => "ui.js"}
       
