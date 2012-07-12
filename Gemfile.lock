@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/jupp0r/health_graph.git
+  revision: 1eb68a619bda471f7fa737aa52295952cf2ba050
+  branch: master
+  specs:
+    health_graph (0.5.6)
+      faraday (>= 0.7.4)
+      faraday_middleware (>= 0.7.8)
+      hashie (>= 1.2)
+      health_graph
+      oauth2 (>= 0.5.2)
+      webmock (>= 1.7.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -23,12 +36,6 @@ GEM
       faraday (>= 0.7.4, < 0.9)
     haml (3.1.6)
     hashie (1.2.0)
-    health_graph (0.5.7)
-      faraday (>= 0.7.4)
-      faraday_middleware (>= 0.7.8)
-      hashie (>= 1.2)
-      oauth2 (>= 0.5.2)
-      webmock (>= 1.7.6)
     highline (1.6.13)
     httpauth (0.1)
     json (1.7.3)
@@ -97,7 +104,7 @@ DEPENDENCIES
   capistrano (~> 2.12.0)
   coffee-script (~> 2.2.0)
   haml (~> 3.1.6)
-  health_graph (~> 0.5.7)
+  health_graph!
   json (~> 1.7.3)
   resque (~> 1.21.0)
   resque-status (~> 0.3.3)
