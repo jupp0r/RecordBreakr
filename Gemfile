@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# vim: et ts=2 sw=2
 
 source "https://rubygems.org"
 
@@ -11,6 +10,7 @@ gem "haml", "~> 3.1.6"
 gem "coffee-script", "~> 2.2.0"
 gem "health_graph", :path => "../health_graph"
 gem "json", "~> 1.7.3"
+gem "capistrano", "~> 2.12.0"
 
 gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"
