@@ -38,7 +38,7 @@ helpers do
   end
 
   def format_distance distance
-    "%#.2f km" % (distance/1000)
+    "%g km" %  ("%.2f" % (distance/1000.0))
   end
 
   def calculate_average_pace total_distance, duration
@@ -107,6 +107,7 @@ get "/" do
     feed = feed.next_page
   end
 
+
   @urls = Hash.new
 
   @records = retrieve_records token, user, @fitness_items, @distances
@@ -166,4 +167,8 @@ end
 get '/ui.js' do
   content_type "text/javascript"
   coffee :ui
+end
+
+get '/navigation.jpg' do
+  File.read(File.join("views","navigation.jpg"))
 end

@@ -4,21 +4,23 @@
     %title RecordBreakr
     %link{"rel" => "stylesheet", "href" => "ui.css", "type" => "text/css"}
   %body
+    %h2 RecordBreakr    
     .status
       .status-heading Analyzing activities ...      
-      %progress#statusbar{:value => "", :max => ""}      
-    %table.topten
-      %tr
-        %th
-        - @records.each_key do |distance|
-          %th #{format_distance distance}
-      - @topten.each_with_index do |topten_place, i|
+      %progress#statusbar{:value => "", :max => ""}
+    #topten-container
+      %table.topten
         %tr
-          %td #{i+1}.    
-          - topten_place.each_value do |place|
-            %td
-              - if not place[:record].nil? and not place[:record][:time].nil?
-                %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
+          %th
+          - @records.each_key do |distance|
+            %th= format_distance distance
+        - @topten.each_with_index do |topten_place, i|
+          %tr
+            %td #{i+1}.    
+            - topten_place.each_value do |place|
+              %td
+                - if not place[:record].nil? and not place[:record][:time].nil?
+                  %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
     .settings
       %a{:href => "/refresh"} refresh records
     %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"}
