@@ -51,7 +51,7 @@ table.topten {
 
 body{
   font-size:14px;
-  color:#666;
+  color:#AAA;
   background:#111 no-repeat;
 
 /* CSS3 Radial Gradients */
@@ -94,7 +94,7 @@ body{
 }
 
 #navigationMenu a{
-  background:url('img/navigation.jpg') no-repeat;
+  background:url('/navigation.jpg') no-repeat;
 
   height:39px;
   width:38px;
@@ -172,26 +172,8 @@ body{
   width:40px;
 }
 
-
-h1{
-  color:#fff;
-  font-size:30px;
-  font-weight:normal;
-  padding:60px 0 20px;
-  text-align:center;
-}
-
-h2{
-  font-weight:normal;
-  text-align:center;
-}
-
-h1,h2{
-  font-family:"Myriad Pro",Arial,Helvetica,sans-serif;
-}
-
 a, a:visited,a:active {
-  color:#0196e3;
+  color:#CCD9FF;
   text-decoration:none;
   outline:none;
 }
