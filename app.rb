@@ -107,6 +107,9 @@ get "/" do
     feed = feed.next_page
   end
 
+  @fitness_items.select! do |activity|
+    activity.type == "Running"
+  end
 
   @urls = Hash.new
 
