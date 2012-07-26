@@ -40,7 +40,7 @@ class Analyzer
   end
 
   def calculate_fastest_distance target_distance, distance_vector
-    return nil unless target_distance < distance_vector.last["distance"]
+    return nil if distance_vector.nil? or distance_vector.last.nil? or target_distance > distance_vector.last["distance"]
     fastest_race_time = Float::INFINITY
     fastest_race_start = 0.0
     fastest_race_stop = 0.0
