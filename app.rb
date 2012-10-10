@@ -85,7 +85,7 @@ end
 
 get "/" do
   @number_of_activities = 30
-  @distances = [1000, 5000, 10000, 21097, 42195]
+  @distances = [1000, 5000, 10000, 21097, 30000, 42195]
   token = request.cookies["token"]
   redirect "/auth" unless token
 
