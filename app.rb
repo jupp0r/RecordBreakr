@@ -119,7 +119,7 @@ get "/" do
   @topten = []
   @number_of_activities.times {@topten.push Hash.new}
   @distances.each do |distance|
-    (0..@number_of_activties-1).each do |i|
+    (0..@number_of_activities-1).each do |i|
       if @records[distance].size > i
         topten_item = @records[distance].keys[i]
         @topten[i][distance] = {:activity => topten_item, :record => @records[distance][topten_item]}
