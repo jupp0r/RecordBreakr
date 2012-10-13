@@ -3,6 +3,7 @@ $ ->
   $.progressbar = $ "#statusbar"
   $.fresh = true
   initializeRowToggling()
+  initializeToolTips()
   updateStatusBar()
 
 updateStatusBar = ->
@@ -25,3 +26,11 @@ toggleRows = (event) ->
   $.each $(".day-item.row[data-interval=\"#{row_interval}\"]"), (index, elem) ->
     $(elem).toggle()
   
+initializeToolTips = ->
+  $("table.topten a").tooltip
+    bodyHandler: ->
+      uri = $(this).attr("data-uri")
+      $(".tooltip[data-uri=\"#{uri}\"]").html()
+    showURL: false
+    showBody: " - "
+    track: true

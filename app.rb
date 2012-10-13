@@ -10,6 +10,7 @@ require "sinatra"
 require "redis"
 require "json"
 require "./lib/analyzer"
+require "coffee_script"
 
 redis = Redis.new
 
@@ -193,6 +194,10 @@ get "/" do
         @topten[i][distance] = {:activity => topten_item, :record => @records[distance][topten_item]}
       end
     end
+  end
+
+  @tooltip_activities = @fitness_items.select do |activity|
+    @urls.keys.include? activity.uri
   end
 
   haml :index, :format => :html5

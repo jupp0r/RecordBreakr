@@ -3,6 +3,7 @@
   %head
     %title RecordBreakr
     %link{"rel" => "stylesheet", "href" => "ui.css", "type" => "text/css"}
+    %link{"rel" => "stylesheet", "href" => "http://jquery.bassistance.de/tooltip/jquery.tooltip.css"}
   %body
     #content
       %h2 RecordBreakr    
@@ -56,11 +57,28 @@
               - topten_place.each_value do |place|
                 %td
                   - if not place[:record].nil? and not place[:record][:time].nil?
-                    %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
+                    %a{:href => @urls[place[:activity]], :data => {:uri => place[:activity]}}= format_duration place[:record][:time]
 
     .settings
       %a{:href => "/refresh"} refresh records
+      
+    - @tooltip_activities.each do |unformatted_activity|
+      - activity = format_item unformatted_activity
+      .tooltip{data: {:uri => unformatted_activity.uri}, :style => "display: none"}
+        %table.tooltip
+          %tr
+            %th Date
+            %th Distance
+            %th Duration
+            %th Pace
+          %tr
+            %td= activity[:date]
+            %td= activity[:distance]
+            %td= activity[:duration]
+            %td= activity[:pace]
 
   %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"}
   %script{:src => "http://malsup.github.com/jquery.blockUI.js"}
+  %script{:src => "http://jquery.bassistance.de/tooltip/lib/jquery.dimensions.js"}
+  %script{:src => "http://jquery.bassistance.de/tooltip/jquery.tooltip.js"}
   %script{:src => "ui.js"}
