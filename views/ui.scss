@@ -1,3 +1,6 @@
+$header-color: #872355;
+$cell-text-color: #D7D8F2;
+
 h2 {
   -webkit-background-clip: border-box;
   -webkit-background-origin: padding-box;
@@ -13,7 +16,7 @@ h2 {
   background-image: none;
   background-origin: padding-box;
   background-size: auto;
-  color: #872355;
+  color: $header-color;
   cursor: auto;
   display: inline;
   font-family: ChunkFiveRegular, sans-serif;
@@ -34,19 +37,46 @@ h2 {
   width: auto;
 }
 
-#topten-container {
-  text-align: center;
+#content {
+  align: center;
+  margin-left: auto ;
+  margin-right: auto ;
   width: 100%;
 }
 
-table.topten {
+table.topten, #daystats-container {
   margin-left:auto;
   margin-right:auto;
   border-spacing: 10px;
+  display: table;
+}
+
+.row {
+  margin-left: auto;
+  margin-right: auto;
+  display: table-row;
+  width: 100%;
+}
+
+.cell {
+  display: table-cell;
+  padding-left: 1em;
+  padding-right: 1em;
+  min-width: 5em;
+  .day-record {
+    color: $cell-text-color;
+  }
+  .day-item {
+    color: $cell-text-color;
+  }
 }
 
 .status {
   display: none;
+}
+
+th, .header {
+  font-weight: bold;
 }
 
 body{
@@ -109,9 +139,9 @@ body{
   text-decoration:none;
 
 /* CSS outer glow with the box-shadow property */
-  -moz-box-shadow:0 0 5px #9ddff5;
-  -webkit-box-shadow:0 0 5px #9ddff5;
-  box-shadow:0 0 5px #9ddff5;
+  -moz-box-shadow:0 0 5px $cell-text-color;
+  -webkit-box-shadow:0 0 5px $cell-text-color;
+  box-shadow:0 0 5px $cell-text-color;
 }
 
 /* Green Button */
@@ -173,7 +203,7 @@ body{
 }
 
 a, a:visited,a:active {
-  color:#CCD9FF;
+  color: $cell-text-color;
   text-decoration:none;
   outline:none;
 }

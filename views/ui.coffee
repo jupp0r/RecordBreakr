@@ -2,6 +2,7 @@ $ ->
   $.status = $ ".status"
   $.progressbar = $ "#statusbar"
   $.fresh = true
+  initializeRowToggling()
   updateStatusBar()
 
 updateStatusBar = ->
@@ -15,3 +16,12 @@ updateStatusBar = ->
     else
       $.unblockUI()
       location.reload() unless $.fresh
+
+initializeRowToggling = ->
+  $('.day-record.row').bind('click', toggleRows)
+
+toggleRows = (event) ->
+  row_interval = $(this).attr("data-interval")
+  $.each $(".day-item.row[data-interval=\"#{row_interval}\"]"), (index, elem) ->
+    $(elem).toggle()
+  

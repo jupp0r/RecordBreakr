@@ -4,26 +4,63 @@
     %title RecordBreakr
     %link{"rel" => "stylesheet", "href" => "ui.css", "type" => "text/css"}
   %body
-    %h2 RecordBreakr    
-    .status
-      .status-heading Analyzing activities ...      
-      %progress#statusbar{:value => "", :max => ""}
-    #topten-container
+    #content
+      %h2 RecordBreakr    
+      .status
+        .status-heading Analyzing activities ...      
+        %progress#statusbar{:value => "", :max => ""}
+          
+      %h3 Cumulative Distance
+      #daystats-container
+        .header.row
+          .header.cell Days
+          .header.cell Distance
+          .header.cell Start date
+          .header.cell End date
+        - @day_intervals.each do |interval|
+          .day-record.row{:data => {:interval => interval}}
+            .day-record.cell
+              %a= interval
+            .day-record.cell
+              %a= format_distance @day_records[:day_distances][interval]
+            .day-record.cell
+              %a= @day_records[:start_dates][interval]
+            .day-record.cell
+              %a= @day_records[:end_dates][interval]
+          .day-item.row.header{:data => {:interval => interval}, :style => "display: none"}
+            .day-item.cell.header Date
+            .day-item.cell.header Distance
+            .day-item.cell.header Duration
+            .day-item.cell.header Pace
+          - @day_records[:items][interval].each do |unformatted_item|
+            - item = format_item unformatted_item
+            .day-item.row{:data => {:interval => interval}, :style => "display: none"}
+              .day-item.cell
+                %a= item[:date]
+              .day-item.cell
+                %a= item[:distance]
+              .day-item.cell
+                %a= item[:duration]
+              .day-item.cell
+                %a= item[:pace]
+      
+      %h3 Time Records
       %table.topten
         %tr
           %th
           - @records.each_key do |distance|
             %th= format_distance distance
-        - @topten.each_with_index do |topten_place, i|
-          %tr
-            %td #{i+1}.    
-            - topten_place.each_value do |place|
-              %td
-                - if not place[:record].nil? and not place[:record][:time].nil?
-                  %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
+          - @topten.each_with_index do |topten_place, i|
+            %tr
+              %td #{i+1}.    
+              - topten_place.each_value do |place|
+                %td
+                  - if not place[:record].nil? and not place[:record][:time].nil?
+                    %a{:href => @urls[place[:activity]]}= format_duration place[:record][:time]
+
     .settings
       %a{:href => "/refresh"} refresh records
-    %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"}
-    %script{:src => "http://malsup.github.com/jquery.blockUI.js"}
-    %script{:src => "ui.js"}
-      
+
+  %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"}
+  %script{:src => "http://malsup.github.com/jquery.blockUI.js"}
+  %script{:src => "ui.js"}
