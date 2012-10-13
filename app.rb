@@ -9,7 +9,6 @@ require "health_graph"
 require "sinatra"
 require "redis"
 require "json"
-
 require "./lib/analyzer"
 
 redis = Redis.new
@@ -43,6 +42,14 @@ helpers do
 
   def calculate_average_pace total_distance, duration
     duration*1000/total_distance
+  end
+
+  def format_item item
+    date = item.start_time.to_date
+    duration = format_duration item.duration
+    distance = format_distance item.total_distance
+    pace = format_duration(item.duration/(item.total_distance/1000))
+    {:date => date, :duration => duration, :distance => distance, :pace => pace}
   end
 
   def retrieve_records token, user, activities, distances
@@ -81,11 +88,69 @@ helpers do
     end
     records
   end
+
+  def calculate_day_statistics fitness_items, day_intervals
+    day_distances = Hash.new
+
+    start_dates = Hash.new
+    end_dates = Hash.new
+    items = Hash.new
+
+    day_intervals.each do |interval|
+      day_distances[interval] = 0.0
+    end
+
+    fitness_items.each do |fitness_item_early|
+      start_time_early = fitness_item_early.start_time.to_date
+
+      cumulated_distance = Hash.new
+      item_list = Hash.new
+
+      day_intervals.each do |interval|
+        cumulated_distance[interval] = fitness_item_early.total_distance
+        item_list[interval] = [fitness_item_early]
+      end
+
+      fitness_items.each do |fitness_item_late|
+        start_time_late = fitness_item_late.start_time.to_date
+        if start_time_late > start_time_early
+          day_intervals.each do |interval|
+            if start_time_late - start_time_early < interval
+              cumulated_distance[interval] += fitness_item_late.total_distance
+              item_list[interval].push fitness_item_late
+            end
+          end
+        end
+      end
+
+      day_intervals.each do |interval|
+        if cumulated_distance[interval] > day_distances[interval]
+          day_distances[interval] = cumulated_distance[interval]
+          start_dates[interval] = start_time_early
+          end_dates[interval] = start_time_early + interval
+          items[interval] = item_list[interval]
+        end
+      end
+    end
+
+    items.each_value do |item_list|
+      item_list.sort_by! do |item|
+        item.start_time.to_time
+      end
+    end
+
+    {:day_distances => day_distances, :start_dates => start_dates, :end_dates => end_dates, :items => items}
+
+  end
+
 end
 
 get "/" do
   @number_of_activities = 30
   @distances = [1000, 5000, 10000, 21097, 30000, 42195]
+
+  @day_intervals = [2,7,14,30,365]
+
   token = request.cookies["token"]
   redirect "/auth" unless token
 
@@ -112,9 +177,12 @@ get "/" do
     activity.type == "Running"
   end
 
+  @day_records = calculate_day_statistics @fitness_items, @day_intervals
+
   @urls = Hash.new
 
   @records = retrieve_records token, user, @fitness_items, @distances
+
 
   @topten = []
   @number_of_activities.times {@topten.push Hash.new}
