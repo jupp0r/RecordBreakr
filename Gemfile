@@ -14,3 +14,5 @@ gem "capistrano", "~> 2.12.0"
 
 gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"
+
+gem "rspec", "~> 2.11.0"
