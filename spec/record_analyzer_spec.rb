@@ -30,6 +30,15 @@ describe RecordAnalyzer do
                                             {'timestamp' => 2.0, 'distance' => 2000.0}], [1000]
       record_analyzer.records.should == {1000 => {:start => 1.0, :stop => 2.0, :time => 1.0}}
     end
+
+    it "should find records in the middle of a track" do
+      record_analyzer = RecordAnalyzer.new [{'timestamp' => 0.0, 'distance' => 0.0},
+                                            {'timestamp' => 750.0, 'distance' => 750.0},
+                                            {'timestamp' => 1500.0, 'distance' => 2250.0},
+                                            {'timestamp' => 2000.0, 'distance' => 2350.0}], [1000]
+      record_analyzer.records.should == {1000 => {:start => 1000.0, :stop => 1500.0, :time => 500.0}}
+    end
+
   end
 
 end

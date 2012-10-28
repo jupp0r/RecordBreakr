@@ -30,7 +30,14 @@ class RecordAnalyzer
 
   private
   def calculate_record_for_distance distance
-    {:time => @distance_vector.last["timestamp"], :start => @distance_vector.first["timestamp"], :stop => @distance_vector.last["timestamp"]}
+    global_minimum = {:time => Float::INFINITY, :start => 0.0, :stop => 0.0}
+    relevant_distance_points = @distance_vector.find_all { |point| point['distance'] >= distance }
+    relevant_distance_points.each do |end_point|
+      start_time = interpolate_time_for_distance(end_point['distance'] - distance)
+      race_time = end_point['timestamp'] - start_time
+      global_minimum = {:time => race_time, :start => start_time, :stop => end_point['timestamp']} if race_time < global_minimum[:time]
+    end
+    global_minimum
   end
 
 end
