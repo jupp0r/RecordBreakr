@@ -16,3 +16,4 @@ gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"
 
 gem "rspec", "~> 2.11.0"
+gem "factory_girl", "~> 4.1"
