@@ -6,7 +6,7 @@ FactoryGirl.define do
   factory :empty_activity, class: AnalyzedActivity do
     uri ""
     type ""
-    start_time Time.now
+    start_time Time.at(0)
     duration 0
     distance 0
     distance_vector []

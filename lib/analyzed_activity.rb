@@ -1,5 +1,7 @@
 require_relative './record_analyzer'
 
+require 'json'
+
 class AnalyzedActivity
   attr_accessor :uri, :type, :start_time, :duration, :distance, :distance_vector, :heart_rate, :heart_rate_vector, :calories, :notes, :gps_path, :record_analyzer
 
@@ -35,6 +37,10 @@ class AnalyzedActivity
                          activity.gps_path )
   end
 
+  def self.from_redis
+
+  end
+
   def record_distances
     [1000]
   end
@@ -43,4 +49,7 @@ class AnalyzedActivity
     @record_analyzer.records
   end
 
+  def persist
+    {uri: @uri, type: @type, start_time: @start_time, duration: @duration, distance: @distance, distance_vector: @distance_vector.to_json, heart_rate: @heart_rate, heart_rate_vector: @heart_rate_vector, calories: @calories, notes: @notes, gps_path: @gps_path.to_json}.to_json
+  end
 end
