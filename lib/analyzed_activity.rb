@@ -37,10 +37,6 @@ class AnalyzedActivity
                          activity.gps_path )
   end
 
-  def self.from_redis
-
-  end
-
   def record_distances
     [1000]
   end
@@ -51,5 +47,10 @@ class AnalyzedActivity
 
   def persist
     {uri: @uri, type: @type, start_time: @start_time, duration: @duration, distance: @distance, distance_vector: @distance_vector.to_json, heart_rate: @heart_rate, heart_rate_vector: @heart_rate_vector, calories: @calories, notes: @notes, gps_path: @gps_path.to_json}.to_json
+  end
+
+  def self.load json_string
+    loaded_activity = JSON.parse(json_string)
+    new loaded_activity["uri"], loaded_activity["type"], loaded_activity["start_time"], loaded_activity["duration"], loaded_activity["distance"], JSON.parse(loaded_activity["distance_vector"]), loaded_activity["heart_rate"], loaded_activity["heart_rate_vector"], loaded_activity["calories"], loaded_activity["notes"], JSON.parse(loaded_activity["gps_path"])
   end
 end
