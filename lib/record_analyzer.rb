@@ -9,7 +9,8 @@ class RecordAnalyzer
     return nil if @distance_vector.empty?
     record_list = Hash.new
     @distances.each do |distance|
-      record_list[distance] = calculate_record_for_distance distance
+      record = calculate_record_for_distance distance
+      record_list[distance] = record if record[:time] < Float::INFINITY
     end
     record_list
   end

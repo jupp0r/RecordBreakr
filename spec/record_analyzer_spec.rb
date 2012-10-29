@@ -39,6 +39,11 @@ describe RecordAnalyzer do
       record_analyzer.records.should == {1000 => {:start => 1000.0, :stop => 1500.0, :time => 500.0}}
     end
 
+    it "should return no records if the distance is too low for any record distance" do
+      record_analyzer = RecordAnalyzer.new [{'timestamp' => 0.0, 'distance' => 0.0}, {'timestamp' => 1.0, 'distance' => 1.0}], [1000]
+      record_analyzer.records.should == {}
+    end
+
   end
 
 end
