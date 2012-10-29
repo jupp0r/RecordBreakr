@@ -7,7 +7,7 @@ describe AnalyzedActivity do
   describe "#records" do
     subject(:activity) { build :empty_activity, record_analyzer: mock("record_analyzer") }
     it "should use the RecordAnalyzer to analize records"  do
-      activity.should_receive :records
+      activity.record_analyzer.should_receive :records
       activity.records
     end
   end
