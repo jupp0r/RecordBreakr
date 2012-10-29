@@ -29,7 +29,7 @@ describe AnalyzedActivity do
     end
     it "should load filled activity" do
       complex_activity = FactoryGirl.build :complex_activity
-      serialized_activity = "{\"uri\":\"\",\"type\":\"\",\"start_time\":\"1970-01-01 01:00:00 +0100\",\"duration\":0,\"distance\":0,\"distance_vector\":\"[{\\\"timestamp\\\":0.0,\\\"distance\\\":0.0},{\\\"timestamp\\\":5.0,\\\"distance\\\":1.0},{\\\"timestamp\\\":10.0,\\\"distance\\\":1001.0},{\\\"timestamp\\\":15.0,\\\"distance\\\":1002.0}]\",\"heart_rate\":0,\"heart_rate_vector\":[{\"timestamp\":0.0,\"heart_rate\":150},{\"timestamp\":5.0,\"heart_rate\":155},{\"timestamp\":10.0,\"heart_rate\":145},{\"timestamp\":15.0,\"heart_rate\":140}],\"calories\":0,\"notes\":\"\",\"gps_path\":\"[]\"}"
+      serialized_activity = "{\"uri\":\"\",\"type\":\"\",\"start_time\":\"1970-01-01 01:00:00 +0100\",\"duration\":0,\"distance\":0,\"distance_vector\":\"[{\\\"timestamp\\\":0.0,\\\"distance\\\":0.0},{\\\"timestamp\\\":5.0,\\\"distance\\\":1.0},{\\\"timestamp\\\":10.0,\\\"distance\\\":1001.0},{\\\"timestamp\\\":15.0,\\\"distance\\\":1002.0}]\",\"heart_rate\":0,\"heart_rate_vector\":[{\"timestamp\":0.0,\"heart_rate\":150},{\"timestamp\":600.0,\"heart_rate\":155},{\"timestamp\":1200.0,\"heart_rate\":145},{\"timestamp\":1800.0,\"heart_rate\":140}],\"calories\":0,\"notes\":\"\",\"gps_path\":\"[]\"}"
       complex_activity.persist.should eq serialized_activity
       loaded_activity = AnalyzedActivity.load serialized_activity
       loaded_activity.persist.should eq complex_activity.persist

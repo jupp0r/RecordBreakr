@@ -33,8 +33,8 @@ FactoryGirl.define do
 
   factory :complex_activity, parent: :distance_two_point_activity do
     heart_rate_vector [{'timestamp' => 0.0, 'heart_rate' => 150},
-                       {'timestamp' => 5.0, 'heart_rate' => 155},
-                       {'timestamp' => 10.0, 'heart_rate' => 145},
-                       {'timestamp' => 15.0, 'heart_rate' => 140}]
+                       {'timestamp' => 600.0, 'heart_rate' => 155},
+                       {'timestamp' => 1200.0, 'heart_rate' => 145},
+                       {'timestamp' => 1800.0, 'heart_rate' => 140}]
   end
 end
