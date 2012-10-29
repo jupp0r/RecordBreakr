@@ -12,5 +12,11 @@ describe TrimpAnalyzer do
       trimp_analyzer = TrimpAnalyzer.new [{'timestamp' => 0.0, 'heart_rate' => 130},{'timestamp' => 30*60.0, 'heart_rate' => 130}], 40, 200, :male
       trimp_analyzer.trimp.should be_within(0.05).of(31.8)
     end
+
+    it "should correctly calculate trimp for multiple heart rate vector points" do
+      trimp_analyzer = TrimpAnalyzer.new [{'timestamp' => 0.0, 'heart_rate' => 130}, {'timestamp' => 15*60.0, 'heart_rate' => 130},
+                                         {'timestamp' => 30*60.0, 'heart_rate' => 130}], 40, 200, :male
+      trimp_analyzer.trimp.should be_within(0.05).of(31.8)
+    end
   end
 end
