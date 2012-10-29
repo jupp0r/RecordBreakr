@@ -1,11 +1,13 @@
 require_relative './record_analyzer'
+require_relative './trimp_analyzer'
+require_relative './settings'
 
 require 'json'
 
 class AnalyzedActivity
-  attr_accessor :uri, :type, :start_time, :duration, :distance, :distance_vector, :heart_rate, :heart_rate_vector, :calories, :notes, :gps_path, :record_analyzer, :record_distances
+  attr_accessor :uri, :type, :start_time, :duration, :distance, :distance_vector, :heart_rate, :heart_rate_vector, :calories, :notes, :gps_path, :record_analyzer, :trimp_analyzer, :record_distances
 
-  def initialize uri, type, start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path
+  def initialize uri, type, start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path, settings = Settings.new
     @uri = uri
     @type = type
     @start_time = start_time
@@ -20,7 +22,10 @@ class AnalyzedActivity
 
     @record_distances = [1000,5000,10000]
 
+    @settings = settings
+
     @record_analyzer = RecordAnalyzer.new @distance_vector, @record_distances
+    @trimp_analyzer = TrimpAnalyzer.new @heart_rate_vector, @settings.resting_heart_rate, @settings.maximum_heart_rate, @settings.gender
   end
 
   def self.from_health_graph_activity activity
@@ -53,4 +58,9 @@ class AnalyzedActivity
     loaded_activity = JSON.parse(json_string)
     new loaded_activity["uri"], loaded_activity["type"], loaded_activity["start_time"], loaded_activity["duration"], loaded_activity["distance"], JSON.parse(loaded_activity["distance_vector"]), loaded_activity["heart_rate"], loaded_activity["heart_rate_vector"], loaded_activity["calories"], loaded_activity["notes"], JSON.parse(loaded_activity["gps_path"])
   end
+
+  def trimp
+    @trimp_analyzer.trimp
+  end
+
 end

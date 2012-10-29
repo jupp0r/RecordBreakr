@@ -35,4 +35,12 @@ describe AnalyzedActivity do
       loaded_activity.persist.should eq complex_activity.persist
     end
   end
+
+  describe "#trimp" do
+    subject(:activity) { build :empty_activity, trimp_analyzer: mock("trimp_analyzer") }
+    it "should call the trimp analizer when asked for its trimp value" do
+      activity.trimp_analyzer.should_receive :trimp
+      activity.trimp
+    end
+  end
 end
