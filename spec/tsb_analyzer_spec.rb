@@ -2,6 +2,10 @@ require_relative './rspec_helpers'
 require_relative '../lib/tsb_analyzer'
 
 describe TsbAnalyzer do
+  Settings.instance.resting_heart_rate = 40
+  Settings.instance.maximum_heart_rate = 200
+  Settings.instance.gender = :male
+
   describe "#atl" do
     it "should calculate atl for no workouts" do
       tsb_analyzer = TsbAnalyzer.new []
@@ -10,9 +14,6 @@ describe TsbAnalyzer do
       }
     end
     it "should calculate atl for a single workout" do
-      Settings.instance.resting_heart_rate = 40
-      Settings.instance.maximum_heart_rate = 200
-      Settings.instance.gender = :male
       activity = FactoryGirl.build(:complex_activity)
       tsb_analyzer = TsbAnalyzer.new [activity]
       start_date = activity.start_time.to_date
@@ -27,9 +28,6 @@ describe TsbAnalyzer do
       }, 0.01)
     end
     it "should calculate atl for multiple workouts" do
-      Settings.instance.resting_heart_rate = 40
-      Settings.instance.maximum_heart_rate = 200
-      Settings.instance.gender = :male
       activity_one = FactoryGirl.build(:complex_activity)
       start_date = activity_one.start_time.to_date
       activity_two = FactoryGirl.build(:complex_activity, start_time: (start_date + 1).to_datetime)
@@ -47,13 +45,13 @@ describe TsbAnalyzer do
   end
 
   describe "#ctl" do
-    it "should calculate atl for no workouts" do
+    it "should calculate ctl for no workouts" do
       pending
     end
-    it "should calculate atl for a single workout" do
+    it "should calculate ctl for a single workout" do
       pending
     end
-    it "should calculate atl for multiple workouts" do
+    it "should calculate ctl for multiple workouts" do
       pending
     end
   end
