@@ -1,6 +1,4 @@
-#!/usr/bin/env ruby
-
-source "https://rubygems.org"
+source :rubygems
 
 gem "sinatra", "~> 1.3.2"
 gem "resque", "~> 1.21.0"
@@ -18,3 +16,5 @@ gem "shotgun", "~> 0.9"
 
 gem "rspec", "~> 2.11.0"
 gem "factory_girl", "~> 4.1"
+
+gem "descriptive_statistics", "~> 1.1.0"
