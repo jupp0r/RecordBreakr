@@ -45,6 +45,15 @@ class TsbAnalyzer
     trimp_vector.mean / trimp_vector.standard_deviation
   end
 
+  def training_strain date
+    return 0.0 if @activities.empty?
+    trimp_sum = 0.0
+    (date-6).upto date do |day|
+      trimp_sum = trimp_sum + trimp_for_day(day)
+    end
+    trimp_sum * monotony(date)
+  end
+
   private
 
   def trimp_for_day day

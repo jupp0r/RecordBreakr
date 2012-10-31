@@ -96,4 +96,21 @@ describe TsbAnalyzer do
       tsb_analyzer.monotony(start_date + 4).should be_within(0.01).of(0.63)
     end
   end
+
+  describe "#training_strain" do
+    it "should calculate training strain if no workouts have been completed" do
+      tsb_analyzer = build :empty_tsb_analyzer
+      tsb_analyzer.training_strain(Date.new).should == 0.0
+    end
+    it "should calculate training strain for a single workout in a week" do
+      tsb_analyzer = build :one_activity_tsb_analyzer
+      start_date = tsb_analyzer.activities.first.start_time.to_date
+      tsb_analyzer.training_strain(start_date + 4).should be_within(0.1).of(19.4)
+    end
+    it "should calculate training strain for multiple workouts in a week" do
+      tsb_analyzer = build :two_activity_tsb_analyzer
+      start_date = tsb_analyzer.activities.first.start_time.to_date
+      tsb_analyzer.training_strain(start_date+4).should be_within(0.1).of(60.1)
+    end
+  end
 end
