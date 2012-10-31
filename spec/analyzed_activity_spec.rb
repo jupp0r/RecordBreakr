@@ -59,4 +59,52 @@ describe AnalyzedActivity do
       loaded_activity.to_json.should == activity.to_json
     end
   end
+
+  describe "#cached?" do
+    subject(:activity) { build :complex_activity }
+    it "should not have cached results when created" do
+      activity.cached?.should == false
+    end
+    it "should not have cached results when only records are computed" do
+      activity.records
+      activity.cached?.should == false
+    end
+    it "should not have cached results when only trimp is computed" do
+      activity.trimp
+      activity.cached?.should == false
+    end
+    it "should have cached results when trimp and records have been computed" do
+      activity.trimp
+      activity.records
+      activity.cached?.should == true
+    end
+    it "should have cached results when saved" do
+      activity.save
+      activity.cached?.should == true
+    end
+    it "should have cached results when loaded" do
+      activity.save
+      loaded_activity = AnalyzedActivity.load activity.uri, activity.redis
+      loaded_activity.cached?.should == true
+    end
+    it "should not have cached results when flushed" do
+      activity.save
+      activity.flush
+      activity.cached?.should == false
+    end
+  end
+
+  describe "#flush" do
+    subject(:activity) { build :complex_activity }
+    it "should not be cached after being flushed" do
+      activity.save
+      activity.flush
+      activity.cached?.should == false
+    end
+    it "should not be in redis after being flushed" do
+      activity.save
+      activity.flush
+      AnalyzedActivity.load(activity.uri,activity.redis).nil?.should == true
+    end
+  end
 end

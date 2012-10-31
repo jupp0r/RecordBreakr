@@ -58,7 +58,13 @@ class AnalyzedActivity
   end
 
   def cached?
-    @records and @trimp
+    not @records.nil? and not @trimp.nil?
+  end
+
+  def flush
+    @records = nil
+    @trimp = nil
+    @redis.del redis_key
   end
 
   def to_json
@@ -72,7 +78,7 @@ class AnalyzedActivity
   end
 
   def save
-    @redis.set "Activities:#{@uri}", to_json
+    @redis.set redis_key, to_json
   end
 
   def self.from_json json_string
@@ -89,6 +95,12 @@ class AnalyzedActivity
     else
       @trimp = @trimp_analyzer.trimp
     end
+  end
+
+  private
+
+  def redis_key
+    "Activities:#{@uri}"
   end
 
 end
