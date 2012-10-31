@@ -13,8 +13,7 @@ class TsbAnalyzer
     lambda_a = 2.0/(7+1)
     k_a = 1.0
     start_date.upto end_date do |day|
-      trimp_today = trimp_for_day day
-      atl_today = trimp_today * lambda_a * k_a + ((1.0 - lambda_a) * atl_yesterday)
+      atl_today = trimp_am(day) * fatigue_lambda_a(lambda_a, day) * k_a + ((1.0 - fatigue_lambda_a(lambda_a, day)) * atl_yesterday)
       atl_yesterday = atl_today
       atl_values[day] = atl_today
     end
@@ -27,8 +26,7 @@ class TsbAnalyzer
     k_f = 2.0
     ctl_yesterday = 0.0
     start_date.upto end_date do |day|
-      trimp_today = trimp_for_day day
-      ctl_today = trimp_today * lambda_f * k_f + ((1.0 - lambda_f) * ctl_yesterday)
+      ctl_today = trimp_cm(day) * lambda_f * k_f + ((1.0 - lambda_f) * ctl_yesterday)
       ctl_yesterday = ctl_today
       ctl_values[day] = ctl_today
     end
@@ -66,5 +64,27 @@ class TsbAnalyzer
       trimp_today = trimp_today + activity.trimp
     end
     trimp_today
+  end
+
+  def monotony_ratio date
+    monotony_break_even = 1.5
+    monotony_cap = 4.0
+    [monotony(date),monotony_cap].min / monotony_break_even
+  end
+
+  def fatigue_lambda_a lambda_a, date
+    atl_m_lambda_factor = 0.5
+    lambda_a * monotony_ratio(date) * atl_m_lambda_factor + (lambda_a * (1 - atl_m_lambda_factor))
+  end
+
+  def trimp_am date
+    atl_m_stress_factor = 0.5
+    trimp = trimp_for_day(date)
+    trimp * monotony_ratio(date) * atl_m_stress_factor + (trimp * (1 - atl_m_stress_factor))
+  end
+
+  def trimp_cm date
+    # hack for now, the constants are the same, although this might be modified later
+    trimp_am date
   end
 end

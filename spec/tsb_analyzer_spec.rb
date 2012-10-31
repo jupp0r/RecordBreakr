@@ -22,13 +22,13 @@ describe TsbAnalyzer do
       tsb_analyzer = build :one_activity_tsb_analyzer
       start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.atl(start_date,start_date+6).should be_close_hash_values({
-                                                                              start_date => 11.88,
-                                                                              start_date+1 => 8.91,
-                                                                              start_date+2 => 6.68,
-                                                                              start_date+3 => 5.01,
-                                                                              start_date+4 => 3.76,
-                                                                              start_date+5 => 2.82,
-                                                                              start_date+6 => 2.11
+                                                                              start_date => 4.81,
+                                                                              start_date+1 => 4.04,
+                                                                              start_date+2 => 3.40,
+                                                                              start_date+3 => 2.86,
+                                                                              start_date+4 => 2.40,
+                                                                              start_date+5 => 2.02,
+                                                                              start_date+6 => 1.70
       }, 0.01)
     end
 
@@ -36,13 +36,13 @@ describe TsbAnalyzer do
       tsb_analyzer = build :two_activity_tsb_analyzer
       start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.atl(start_date, start_date+6).should be_close_hash_values({
-                                                                               start_date => 11.88,
-                                                                               start_date + 1 => 20.79,
-                                                                               start_date + 2 => 15.59,
-                                                                               start_date + 3 => 11.70,
-                                                                               start_date + 4 => 8.77,
-                                                                               start_date + 5 => 6.58,
-                                                                               start_date + 6 => 4.93
+                                                                               start_date => 4.81,
+                                                                               start_date + 1 => 9.96,
+                                                                               start_date + 2 => 8.19,
+                                                                               start_date + 3 => 6.73,
+                                                                               start_date + 4 => 5.54,
+                                                                               start_date + 5 => 4.55,
+                                                                               start_date + 6 => 3.74
                                                                              }, 0.01)
     end
   end
@@ -58,24 +58,24 @@ describe TsbAnalyzer do
       tsb_analyzer = build :one_activity_tsb_analyzer
       start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.ctl(start_date, start_date+4).should be_close_hash_values({
-                                                                                start_date => 4.42,
-                                                                                start_date + 1 => 4.22,
-                                                                                start_date + 2 => 4.02,
-                                                                                start_date + 3 => 3.83,
-                                                                                start_date + 4 => 3.65
+                                                                                start_date => 2.81,
+                                                                                start_date + 1 => 2.68,
+                                                                                start_date + 2 => 2.56,
+                                                                                start_date + 3 => 2.44,
+                                                                                start_date + 4 => 2.32
                                                                               }, 0.01)
     end
     it "should calculate ctl for multiple workouts" do
       tsb_analyzer = build :two_activity_tsb_analyzer
       start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.ctl(start_date, start_date+6).should be_close_hash_values({
-                                                                               start_date => 4.42,
-                                                                               start_date + 1 => 8.64,
-                                                                               start_date + 2 => 8.23,
-                                                                               start_date + 3 => 7.85,
-                                                                               start_date + 4 => 7.49,
-                                                                               start_date + 5 => 7.14,
-                                                                               start_date + 6 => 6.81
+                                                                               start_date => 2.81,
+                                                                               start_date + 1 => 5.82,
+                                                                               start_date + 2 => 5.55,
+                                                                               start_date + 3 => 5.29,
+                                                                               start_date + 4 => 5.05,
+                                                                               start_date + 5 => 4.82,
+                                                                               start_date + 6 => 4.59
                                                                              }, 0.01)
     end
   end
