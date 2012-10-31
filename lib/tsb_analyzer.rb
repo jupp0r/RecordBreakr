@@ -1,6 +1,8 @@
 require 'descriptive_statistics/safe'
 
 class TsbAnalyzer
+  attr_accessor :activities
+
   def initialize activities
     @activities = activities
   end

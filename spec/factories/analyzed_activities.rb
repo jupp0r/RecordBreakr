@@ -1,8 +1,6 @@
 require 'factory_girl'
 
 FactoryGirl.define do
-  initialize_with { new(uri,type,start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path) }
-
   factory :empty_activity, class: AnalyzedActivity do
     uri ""
     type ""
@@ -15,6 +13,7 @@ FactoryGirl.define do
     calories 0
     notes ""
     gps_path []
+    initialize_with { new(uri,type,start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path) }
   end
 
   factory :exact_distance_activity, parent: :empty_activity do
