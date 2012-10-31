@@ -54,6 +54,10 @@ class TsbAnalyzer
     trimp_sum * monotony(date)
   end
 
+  def first_activity_date
+    @activities.first.start_time.to_date
+  end
+
   private
 
   def trimp_for_day day

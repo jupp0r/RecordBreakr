@@ -20,7 +20,7 @@ describe TsbAnalyzer do
 
     it "should calculate atl for a single workout" do
       tsb_analyzer = build :one_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.atl(start_date,start_date+6).should be_close_hash_values({
                                                                               start_date => 11.88,
                                                                               start_date+1 => 8.91,
@@ -34,7 +34,7 @@ describe TsbAnalyzer do
 
     it "should calculate atl for multiple workouts" do
       tsb_analyzer = build :two_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.atl(start_date, start_date+6).should be_close_hash_values({
                                                                                start_date => 11.88,
                                                                                start_date + 1 => 20.79,
@@ -56,7 +56,7 @@ describe TsbAnalyzer do
     end
     it "should calculate ctl for a single workout" do
       tsb_analyzer = build :one_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.ctl(start_date, start_date+4).should be_close_hash_values({
                                                                                 start_date => 4.42,
                                                                                 start_date + 1 => 4.22,
@@ -67,7 +67,7 @@ describe TsbAnalyzer do
     end
     it "should calculate ctl for multiple workouts" do
       tsb_analyzer = build :two_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.ctl(start_date, start_date+6).should be_close_hash_values({
                                                                                start_date => 4.42,
                                                                                start_date + 1 => 8.64,
@@ -87,12 +87,12 @@ describe TsbAnalyzer do
     end
     it "should calculate monotony for a single workout in a week" do
       tsb_analyzer = build :one_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.monotony(start_date + 4).should be_within(0.01).of(0.41)
     end
     it "should calculate monotony for multiple workouts in a week" do
       tsb_analyzer = build :two_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.monotony(start_date + 4).should be_within(0.01).of(0.63)
     end
   end
@@ -104,12 +104,12 @@ describe TsbAnalyzer do
     end
     it "should calculate training strain for a single workout in a week" do
       tsb_analyzer = build :one_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.training_strain(start_date + 4).should be_within(0.1).of(19.4)
     end
     it "should calculate training strain for multiple workouts in a week" do
       tsb_analyzer = build :two_activity_tsb_analyzer
-      start_date = tsb_analyzer.activities.first.start_time.to_date
+      start_date = tsb_analyzer.first_activity_date
       tsb_analyzer.training_strain(start_date+4).should be_within(0.1).of(60.1)
     end
   end
