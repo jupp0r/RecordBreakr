@@ -1,9 +1,10 @@
 require 'factory_girl'
+require 'mock_redis'
 
 FactoryGirl.define do
   factory :empty_activity, class: AnalyzedActivity do
-    uri ""
-    type ""
+    uri "/activities/e332322aeau"
+    type "Running"
     start_time Time.at(0)
     duration 0
     distance 0
@@ -14,6 +15,7 @@ FactoryGirl.define do
     notes ""
     gps_path []
     initialize_with { new(uri,type,start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path) }
+    redis MockRedis.new
   end
 
   factory :exact_distance_activity, parent: :empty_activity do
