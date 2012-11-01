@@ -7,7 +7,7 @@ gem "sass", "~> 3.1.20"
 gem "haml", "~> 3.1.6"
 gem "coffee-script", "~> 2.2.0"
 gem "health_graph", :git => "git://github.com/jupp0r/health_graph.git", :branch => "master"
-gem "yajl-ruby", "~> 1.1.0"
+gem "json", "~> 1.7.5"
 gem "capistrano", "~> 2.12.0"
 gem "rake"
 

@@ -53,9 +53,11 @@ helpers do
     {:date => date, :duration => duration, :distance => distance, :pace => pace}
   end
 
-  def retrieve_records token, user, activities, distances
+  def retrieve_records token, user, activities
     redis = Redis.new
     records = Hash.new
+
+    distances = Settings.instance.record_distances
 
     distances.each do |distance|
       records[distance] = Hash.new
@@ -63,15 +65,18 @@ helpers do
 
     @fitness_items.each do |fitness_item|
       if redis.sismember "Users:#{user.userID}:analyzed_activities", fitness_item.uri
+        activity = AnalyzedActivity.load fitness_item.uri, redis
         distances.each do |distance|
-          records[distance][fitness_item.uri] = Hash[redis.hgetall("Activities:#{fitness_item.uri}:record:#{distance}").map{|(k,v)| [k.to_sym,v.to_f]}]
-          @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
+          unless activity.records[distance].nil?
+            records[distance][fitness_item.uri] = activity.records[distance]
+            @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
+          end
         end
       elsif redis.sismember "Users:#{user.userID}:analyzing_activities", fitness_item.uri
         @processing.push fitness_item.uri
       else
         redis.sadd "Users:#{user.userID}:analyzing_activities", fitness_item.uri
-        job_id = Analyzer.create(:distances => distances, :token => token, :activity_uri => fitness_item.uri)
+        job_id = Analyzer.create(:token => token, :activity_uri => fitness_item.uri, :settings => Settings.instance.to_hash)
         redis.sadd "Users:#{user.userID}:running_jobs", job_id
       end
     end
@@ -144,13 +149,21 @@ helpers do
 
   end
 
+  def load_settings
+    Settings.instance.gender = :male
+    Settings.instance.resting_heart_rate = 55
+    Settings.instance.maximum_heart_rate = 180
+    Settings.instance.record_distances = [1000, 5000, 10000, 21097, 30000, 42195]
+  end
+
 end
 
 get "/" do
   @number_of_activities = 30
-  @distances = [1000, 5000, 10000, 21097, 30000, 42195]
 
   @day_intervals = [2,7,14,30,365]
+
+  load_settings
 
   token = request.cookies["token"]
   redirect "/auth" unless token
@@ -182,12 +195,12 @@ get "/" do
 
   @urls = Hash.new
 
-  @records = retrieve_records token, user, @fitness_items, @distances
+  @records = retrieve_records token, user, @fitness_items
 
 
   @topten = []
   @number_of_activities.times {@topten.push Hash.new}
-  @distances.each do |distance|
+  Settings.instance.record_distances.each do |distance|
     (0..@number_of_activities-1).each do |i|
       if @records[distance].size > i
         topten_item = @records[distance].keys[i]

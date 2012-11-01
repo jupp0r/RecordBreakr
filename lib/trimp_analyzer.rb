@@ -7,11 +7,13 @@ class TrimpAnalyzer
     @scaling_factor = Hash.new
     @scaling_factor[:male] = 1.92
     @scaling_factor[:female] = 1.67
+    raise 'insufficient settings for trimp analysis' if [@heart_rate_vector, @resting_heart_rate, @maximum_heart_rate].any? { |e| e.nil? }
   end
 
   # formula taken from http://fellrnr.com/wiki/TRIMP
   def trimp
     trimp = 0.0
+    return trimp if @heart_rate_vector.nil?
     @heart_rate_vector.each_cons(2) do |hr_point_early, hr_point_late|
       delta_t = hr_point_late['timestamp'] - hr_point_early['timestamp']
       average_heart_rate = (hr_point_early['heart_rate'] + hr_point_late['heart_rate'])/2
