@@ -69,7 +69,7 @@ helpers do
       if redis.sismember "Users:#{user.userID}:analyzed_activities", fitness_item.uri
         activity = AnalyzedActivity.load fitness_item.uri, redis
         distances.each do |distance|
-          unless activity.records[distance].nil?
+          unless activity.records.nil? or activity.records[distance].nil?
             records[distance][fitness_item.uri] = activity.records[distance]
             @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
           end
