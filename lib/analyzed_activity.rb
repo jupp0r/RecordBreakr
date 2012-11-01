@@ -94,6 +94,7 @@ class AnalyzedActivity
   private
 
   def self.coerce_hash hash, key_fun, args
+    return nil if hash.nil?
     hash.each_with_object({}) do |(k,v),h|
       h[k.send key_fun] = if not args.nil? and args.length > 1
                             self.coerce_hash v, args[0], args[1..-1]

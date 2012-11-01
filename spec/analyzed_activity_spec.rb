@@ -1,10 +1,12 @@
 require_relative '../lib/analyzed_activity'
+require_relative '../lib/settings'
 require_relative './factories/analyzed_activities'
 require_relative './rspec_helpers'
 
 require 'mock_redis'
 
 describe AnalyzedActivity do
+  Settings.instance.record_distances = [1000]
 
   describe "#records" do
     subject(:activity) { build :empty_activity, record_analyzer: mock("record_analyzer") }
