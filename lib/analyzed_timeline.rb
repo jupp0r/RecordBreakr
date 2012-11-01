@@ -1,0 +1,3 @@
+class AnalyzedTimeline
+
+end
