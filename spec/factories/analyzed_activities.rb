@@ -1,11 +1,10 @@
 require 'factory_girl'
+require 'mock_redis'
 
 FactoryGirl.define do
-  initialize_with { new(uri,type,start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path) }
-
   factory :empty_activity, class: AnalyzedActivity do
-    uri ""
-    type ""
+    uri "/activities/e332322aeau"
+    type "Running"
     start_time Time.at(0)
     duration 0
     distance 0
@@ -15,6 +14,8 @@ FactoryGirl.define do
     calories 0
     notes ""
     gps_path []
+    initialize_with { new(uri,type,start_time, duration, distance, distance_vector, heart_rate, heart_rate_vector, calories, notes, gps_path) }
+    redis MockRedis.new
   end
 
   factory :exact_distance_activity, parent: :empty_activity do
@@ -33,8 +34,8 @@ FactoryGirl.define do
 
   factory :complex_activity, parent: :distance_two_point_activity do
     heart_rate_vector [{'timestamp' => 0.0, 'heart_rate' => 150},
-                       {'timestamp' => 5.0, 'heart_rate' => 155},
-                       {'timestamp' => 10.0, 'heart_rate' => 145},
-                       {'timestamp' => 15.0, 'heart_rate' => 140}]
+                       {'timestamp' => 600.0, 'heart_rate' => 155},
+                       {'timestamp' => 1200.0, 'heart_rate' => 145},
+                       {'timestamp' => 1800.0, 'heart_rate' => 140}]
   end
 end
