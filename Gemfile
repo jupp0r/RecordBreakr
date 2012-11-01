@@ -11,6 +11,8 @@ gem "json", "~> 1.7.5"
 gem "capistrano", "~> 2.12.0"
 gem "rake"
 
+gem "therubyracer", "~> 0.10.2"
+
 gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"
 
