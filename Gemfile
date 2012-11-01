@@ -22,3 +22,5 @@ gem "factory_girl", "~> 4.1"
 gem "descriptive_statistics", "~> 1.1.0"
 
 gem "mock_redis", "~> 0.6.0"
+
+gem "rake", "~> 0.9.2.2"
