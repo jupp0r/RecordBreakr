@@ -4,6 +4,8 @@ require "rvm/capistrano"
 before 'deploy:setup', 'rvm:install_rvm'
 before 'deploy:setup', 'rvm:install_ruby'
 
+set :rvm_ruby_string, 'ruby-1.9.3'
+
 set :user, 'jupp'
 set :domain, 'jupp0r.de'
 set :applicationdir, "/var/www/recordbreakr.jupp0r.de/application"
