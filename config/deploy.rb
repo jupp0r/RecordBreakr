@@ -8,6 +8,8 @@ set :rvm_ruby_string, 'ruby-1.9.3'
 
 set :rake, "#{rake} --trace"
 
+set :bundle_flags, "--deployment --local"
+
 set :user, 'jupp'
 set :domain, 'jupp0r.de'
 set :applicationdir, "/var/www/recordbreakr.jupp0r.de/application"
