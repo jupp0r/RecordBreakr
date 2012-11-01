@@ -11,8 +11,9 @@ gem "json", "~> 1.7.5"
 gem "capistrano", "~> 2.12.0"
 gem "rake"
 
+gem "rake-compiler", "~> 0.8.1"
 gem "therubyracer", "~> 0.11.0beta8"
-gem "libv8", "~> 3.11.8.3"
+gem "libv8", :git => "git://github.com/jupp0r/libv8.git"
 
 gem "thin", "~> 1.3.1"
 gem "shotgun", "~> 0.9"
