@@ -1,5 +1,4 @@
 source :rubygems
-source "file:///home/jupp/libv8/pkg"
 
 gem "sinatra", "~> 1.3.2"
 gem "resque", "~> 1.21.0"

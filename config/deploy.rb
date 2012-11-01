@@ -4,7 +4,7 @@ require "rvm/capistrano"
 before 'deploy:setup', 'rvm:install_rvm'
 before 'deploy:setup', 'rvm:install_ruby'
 
-set :rvm_ruby_string, 'ruby-1.9.3'
+set :rvm_ruby_string, 'ruby-1.9.3@recordbreakr'
 
 set :rake, "#{rake} --trace"
 

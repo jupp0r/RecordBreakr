@@ -12,7 +12,6 @@ GIT
 
 GEM
   remote: http://rubygems.org/
-  remote: file:/home/jupp/libv8/pkg/
   specs:
     activesupport (3.2.8)
       i18n (~> 0.6)
