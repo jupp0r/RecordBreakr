@@ -20,6 +20,8 @@ HealthGraph.configure do |config|
   config.authorization_redirect_url = ENV["REDIRECT_URL"]
 end
 
+ENV['EXECJS_RUNTIME'] = 'Node'
+
 helpers do
   def parse_duration duration_in_s
     duration_in_s = (duration_in_s+0.5).to_i

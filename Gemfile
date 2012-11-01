@@ -13,8 +13,6 @@ gem "capistrano", "~> 2.12.0"
 gem "rake"
 
 gem "rake-compiler", "~> 0.8.1"
-gem "therubyracer", "~> 0.11.0beta8"
-gem "libv8"
 
 gem "rvm-capistrano", "~> 1.2.7"
 
