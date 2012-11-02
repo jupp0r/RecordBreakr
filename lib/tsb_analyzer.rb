@@ -35,12 +35,18 @@ class TsbAnalyzer
 
   def monotony date
     return 0.0 if @activities.empty?
+    monotony_cap = 10.0
     trimp_vector = []
     (date-6).upto date do |day|
       trimp_vector.push(trimp_for_day day)
     end
     trimp_vector.extend(DescriptiveStatistics)
-    trimp_vector.mean / trimp_vector.standard_deviation
+    monotony_raw = trimp_vector.mean / trimp_vector.standard_deviation
+    if monotony_raw.nan? or monotony_raw > monotony_cap
+      monotony_cap
+    else
+      monotony_raw
+    end
   end
 
   def training_strain date
@@ -69,7 +75,7 @@ class TsbAnalyzer
   def monotony_ratio date
     monotony_break_even = 1.5
     monotony_cap = 4.0
-    [monotony(date),monotony_cap].min / monotony_break_even
+    [monotony(date),monotony_cap].sort[0] / monotony_break_even
   end
 
   def fatigue_lambda_a lambda_a, date

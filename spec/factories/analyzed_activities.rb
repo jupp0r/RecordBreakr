@@ -2,6 +2,10 @@ require 'factory_girl'
 require 'mock_redis'
 
 FactoryGirl.define do
+  sequence :date do |n|
+    (Time.at(0).to_date + 2*n).to_time
+  end
+
   factory :empty_activity, class: AnalyzedActivity do
     uri "/activities/e332322aeau"
     type "Running"
@@ -33,6 +37,7 @@ FactoryGirl.define do
   end
 
   factory :complex_activity, parent: :distance_two_point_activity do
+    start_time { generate :date }
     heart_rate_vector [{'timestamp' => 0.0, 'heart_rate' => 150},
                        {'timestamp' => 600.0, 'heart_rate' => 155},
                        {'timestamp' => 1200.0, 'heart_rate' => 145},
