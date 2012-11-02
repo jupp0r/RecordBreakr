@@ -7,7 +7,20 @@ class AnalyzedTimeline
   end
 
   def atl
-    start_date = @activities.first.start_time.to_date
-    @tsb_analyzer.atl start_date, Date.today
+    @tsb_analyzer.atl analysis_start_date, Date.today
+  end
+
+  def ctl
+    @tsb_analyzer.ctl analysis_start_date, Date.today
+  end
+
+  def ctl_minus_atl
+    atl_vec = atl
+    ctl_vec = ctl
+    ctl.map {|date, ctl| ctl - atl_vec[date]}
+  end
+
+  def analysis_start_date
+    @activities.first.start_time.to_date
   end
 end

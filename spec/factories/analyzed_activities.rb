@@ -3,13 +3,13 @@ require 'mock_redis'
 
 FactoryGirl.define do
   sequence :date do |n|
-    (Time.at(0).to_date + 2*n).to_time
+    (Time.new(2012).to_date + 2*n).to_time
   end
 
   factory :empty_activity, class: AnalyzedActivity do
     uri "/activities/e332322aeau"
     type "Running"
-    start_time Time.at(0)
+    start_time Time.new 2012
     duration 0
     distance 0
     distance_vector []

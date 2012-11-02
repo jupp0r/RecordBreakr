@@ -6,15 +6,37 @@ require_relative './rspec_helpers'
 require_relative './factories/analyzed_activities.rb'
 
 describe AnalyzedTimeline do
-  it "should return atl for all days" do
-    activities = [1..20].map { build :complex_activity }
-    analyzed_timeline = AnalyzedTimeline.new activities
-    atl_hash = analyzed_timeline.atl
-    atl_hash.should have_key activities.first.start_time.to_date
-    atl_hash.should have_key Date.today
+  subject(:analyzed_timeline) do
+    AnalyzedTimeline.new @activities
   end
-  it "should return ctl for all days"
-  it "should return ctl-atl for all days"
+
+  before :each do
+    @activities = [1..20].map { FactoryGirl.build :complex_activity }
+  end
+
+  it "should calculate the correct start date for analysis" do
+    analyzed_timeline.analysis_start_date.should == @activities.first.start_time.to_date
+  end
+
+  it "should return atl for all days" do
+    atl_hash = analyzed_timeline.atl
+    analyzed_timeline.analysis_start_date.upto Date.today do |day|
+      atl_hash.should have_key day
+    end
+  end
+
+  it "should return ctl for all days" do
+    ctl_hash = analyzed_timeline.ctl
+    analyzed_timeline.analysis_start_date.upto Date.today do |day|
+      ctl_hash.should have_key day
+    end
+  end
+
+  it "should return ctl-atl for all days" do
+    ctl_minus_atl_hash = analyzed_timeline.ctl_minus_atl
+
+  end
+
   it "should return maximum cumulative distances"
   it "sholud return records for all activities"
 end
