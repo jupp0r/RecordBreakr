@@ -34,7 +34,9 @@ describe AnalyzedTimeline do
 
   it "should return ctl-atl for all days" do
     ctl_minus_atl_hash = analyzed_timeline.ctl_minus_atl
-
+    analyzed_timeline.analysis_start_date.upto Date.today do |day|
+      ctl_minus_atl_hash.should have_key day
+    end
   end
 
   it "should return maximum cumulative distances"

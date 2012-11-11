@@ -17,10 +17,12 @@ class AnalyzedTimeline
   def ctl_minus_atl
     atl_vec = atl
     ctl_vec = ctl
-    ctl.map {|date, ctl| ctl - atl_vec[date]}
+    ctl.each_with_object({}) {|(date, ctl), h| h[date] = ctl - atl_vec[date]}
   end
 
   def analysis_start_date
     @activities.first.start_time.to_date
   end
+
+
 end
