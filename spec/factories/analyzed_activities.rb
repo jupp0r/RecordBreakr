@@ -24,7 +24,7 @@ FactoryGirl.define do
 
   factory :exact_distance_activity, parent: :empty_activity do
     distance_vector [{'timestamp' => 0.0, 'distance' => 0.0},
-                     {'timestamp' => 5.0, 'distance' => 1000}]
+                     {'timestamp' => 5.0, 'distance' => 1002}]
   end
 
   factory :distance_two_point_activity, parent: :empty_activity do
@@ -37,10 +37,14 @@ FactoryGirl.define do
   end
 
   factory :complex_activity, parent: :distance_two_point_activity do
-    start_time { generate :date }
+    start_time { FactoryGirl.generate :date }
     heart_rate_vector [{'timestamp' => 0.0, 'heart_rate' => 150},
                        {'timestamp' => 600.0, 'heart_rate' => 155},
                        {'timestamp' => 1200.0, 'heart_rate' => 145},
                        {'timestamp' => 1800.0, 'heart_rate' => 140}]
+  end
+
+  factory :wellformed_activity, parent: :complex_activity do
+    distance 1002.0
   end
 end

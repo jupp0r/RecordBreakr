@@ -7,11 +7,9 @@ require_relative './factories/analyzed_activities.rb'
 
 describe AnalyzedTimeline do
   subject(:analyzed_timeline) do
+    @activities = Array(1..20).map { FactoryGirl.build :wellformed_activity }
+    @activities.sort_by! { |activity| activity.start_time}
     AnalyzedTimeline.new @activities
-  end
-
-  before :each do
-    @activities = [1..20].map { FactoryGirl.build :complex_activity }
   end
 
   it "should calculate the correct start date for analysis" do
@@ -39,6 +37,16 @@ describe AnalyzedTimeline do
     end
   end
 
-  it "should return maximum cumulative distances"
+  it "should return maximum cumulative distances" do
+    time_periods_in_days = [1,2,7,14,30]
+    cumulative_distances = analyzed_timeline.maximum_cumulative_distances time_periods_in_days
+    time_periods_in_days.each do |period|
+      cumulative_distances.should have_key period
+    end
+    cumulative_distances.each do |days, distance|
+      distance[:distance].should == ((days+1)/2.0).floor*1002
+    end
+  end
+
   it "sholud return records for all activities"
 end
