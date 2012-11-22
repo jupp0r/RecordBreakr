@@ -48,5 +48,53 @@ describe AnalyzedTimeline do
     end
   end
 
-  it "sholud return records for all activities"
+  it "sholud return records for all activities" do
+    Settings.instance.record_distances = 500,1500,2000
+    activities = Array(1..3).map do |i|
+      distance = 0.95**(i-1) * (i-1) * 1000
+      distance_vector = []
+      (i+1).times do |k|
+        distance_vector << {'timestamp' => k * 300, 'distance' => k * 1000 * 0.95**(i-1)}
+      end
+
+      FactoryGirl.build :wellformed_activity, distance: distance, distance_vector: distance_vector
+    end
+    complex_analyzed_timeline = AnalyzedTimeline.new activities
+    complex_analyzed_timeline.records.should ==
+      {
+      500 =>
+      [
+       {
+         activity: activities[0],
+         record: activities[0].records[500]
+       },
+       {
+         activity: activities[1],
+         record: activities[1].records[500]
+       },
+       {
+         activity: activities[2],
+         record: activities[2].records[500]
+       }
+      ],
+      1500 =>
+      [
+       {
+         activity: activities[1],
+         record: activities[1].records[1500]
+       },
+       {
+         activity: activities[2],
+         record: activities[2].records[1500]
+       }
+      ],
+      2000 =>
+      [
+       {
+         activity: activities[2],
+         record: activities[2].records[2000]
+       }
+      ]
+    }
+  end
 end

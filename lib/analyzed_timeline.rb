@@ -32,6 +32,26 @@ class AnalyzedTimeline
     maximum_distances
   end
 
+  def records
+    distances = Settings.instance.record_distances
+    records = Hash.new
+    distances.each do |distance|
+      records[distance] = Array.new
+    end
+    @activities.each do |activity|
+      activity_records = activity.records
+      activity_records.each_pair do |distance, record|
+        next if not distances.member? distance
+        next if record.nil?
+        records[distance] << {activity: activity, record: record}
+      end
+    end
+    records.each do |distance, record_array|
+      record_array.sort_by!{|r| r[:record][:time]}
+    end
+    records
+  end
+
   private
 
   def find_maximum_activity_distance period
@@ -55,8 +75,6 @@ class AnalyzedTimeline
       end
     end
     maximum_activities.sort_by! { |activity| activity.start_time }
-    puts maximum_activities.first.start_time
-    puts maximum_distance
     {distance: maximum_distance, activities: maximum_activities}
   end
 end
