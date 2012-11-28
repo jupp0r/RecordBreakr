@@ -66,7 +66,7 @@ helpers do
     end
 
     @fitness_items.each do |fitness_item|
-      if redis.sismember "Users:#{user.userID}:analyzed_activities", fitness_item.uri
+      if redis.sismember "analyzed_activities", fitness_item.uri
         activity = AnalyzedActivity.load fitness_item.uri, redis
         distances.each do |distance|
           unless activity.records.nil? or activity.records[distance].nil?
@@ -74,12 +74,11 @@ helpers do
             @urls[fitness_item.uri] = redis.get "Activities:#{fitness_item.uri}:url"
           end
         end
-      elsif redis.sismember "Users:#{user.userID}:analyzing_activities", fitness_item.uri
+      elsif redis.sismember "analyzing_activities", fitness_item.uri
         @processing.push fitness_item.uri
       else
-        redis.sadd "Users:#{user.userID}:analyzing_activities", fitness_item.uri
+        redis.sadd "analyzing_activities", fitness_item.uri
         job_id = Analyzer.create(:token => token, :activity_uri => fitness_item.uri, :settings => Settings.instance.to_hash)
-        redis.sadd "Users:#{user.userID}:running_jobs", job_id
       end
     end
 
@@ -170,6 +169,8 @@ get "/" do
   token = request.cookies["token"]
   redirect "/auth" unless token
 
+  settings.token = token
+
   user = HealthGraph::User.new token
 
   @uid = user.userID
@@ -227,8 +228,8 @@ get "/progress" do
 
   redis = Redis.new
 
-  incomplete_items = redis.smembers("Users:#{@uid}:analyzing_activities").size
-  complete_items = redis.smembers("Users:#{@uid}:analyzed_activities").size
+  incomplete_items = redis.smembers("analyzing_activities").size
+  complete_items = redis.smembers("analyzed_activities").size
 
   {:complete => complete_items, :incomplete => incomplete_items}.to_json
 end
@@ -237,7 +238,7 @@ get "/refresh" do
   token = request.cookies["token"]
   user = HealthGraph::User.new token
   redis = Redis.new
-  redis.del "Users:#{user.userID}:analyzed_activities"
+  redis.del "analyzed_activities"
   redirect "/"
 end
 

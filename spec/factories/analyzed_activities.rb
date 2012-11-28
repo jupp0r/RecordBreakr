@@ -3,13 +3,17 @@ require 'mock_redis'
 
 FactoryGirl.define do
   sequence :date do |n|
-    (Time.new(2012).to_date + 2*n).to_time
+    (Time.new(2012).to_date + 2*n).to_datetime
+  end
+
+  sequence :uri do |n|
+    "activities/#{n}"
   end
 
   factory :empty_activity, class: AnalyzedActivity do
-    uri "/activities/e332322aeau"
+    uri { generate :uri }
     type "Running"
-    start_time Time.new 2012
+    start_time Time.new(2012).to_datetime
     duration 0
     distance 0
     distance_vector []
@@ -37,7 +41,7 @@ FactoryGirl.define do
   end
 
   factory :complex_activity, parent: :distance_two_point_activity do
-    start_time { FactoryGirl.generate :date }
+    start_time { generate :date }
     heart_rate_vector [{'timestamp' => 0.0, 'heart_rate' => 150},
                        {'timestamp' => 600.0, 'heart_rate' => 155},
                        {'timestamp' => 1200.0, 'heart_rate' => 145},

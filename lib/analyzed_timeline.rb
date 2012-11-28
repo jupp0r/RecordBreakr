@@ -1,30 +1,47 @@
 class AnalyzedTimeline
-  attr_accessor :activies
+  attr_accessor :activities
 
-  def initialize activities
-    @activities = activities.sort_by {|activity| activity.start_time}
+  def initialize activity_uris
+    @activity_uris = activity_uris
+    load_activities activity_uris
+    @activities.sort_by! do |activity|
+      if activity != :analyzing
+        activity.start_time
+      else
+        DateTime.new
+      end
+    end
     @tsb_analyzer = TsbAnalyzer.new @activities
   end
 
+  def refresh_activities!
+    load_activities @activity_uris
+  end
+
   def atl
+    return :in_progress unless progress == :all_done
     @tsb_analyzer.atl analysis_start_date, Date.today
   end
 
   def ctl
+    return :in_progress unless progress == :all_done
     @tsb_analyzer.ctl analysis_start_date, Date.today
   end
 
   def ctl_minus_atl
+    return :in_progress unless progress == :all_done
     atl_vec = atl
     ctl_vec = ctl
     ctl.each_with_object({}) {|(date, ctl), h| h[date] = ctl - atl_vec[date]}
   end
 
   def analysis_start_date
+    return :in_progress unless progress == :all_done
     @activities.first.start_time.to_date
   end
 
   def maximum_cumulative_distances period_in_days
+    return :in_progress unless progress == :all_done
     maximum_distances = Hash.new
     period_in_days.each do |period|
       maximum_distances[period] = find_maximum_activity_distance period
@@ -33,6 +50,31 @@ class AnalyzedTimeline
   end
 
   def records
+    if progress == :all_done
+      prepare_records
+    else
+      maybe_launch_analyzers
+      :in_progress
+    end
+  end
+
+  def progress
+    refresh_activities!
+    number_activities_done = 0
+    number_activities = @activities.size
+    @activities.each do |activity|
+      number_activities_done += 1 if activity != :analyzing
+    end
+    if number_activities_done == number_activities
+      :all_done
+    else
+      {done: number_activities_done, all: number_activities}
+    end
+  end
+
+  private
+
+  def prepare_records
     distances = Settings.instance.record_distances
     records = Hash.new
     distances.each do |distance|
@@ -52,7 +94,11 @@ class AnalyzedTimeline
     records
   end
 
-  private
+  def maybe_launch_analyzers
+    @activities.each do |activity|
+      activity.start_analyzer! unless activity == :analyzing or activity.analyzed?
+    end
+  end
 
   def find_maximum_activity_distance period
     maximum_distance = 0
@@ -76,5 +122,19 @@ class AnalyzedTimeline
     end
     maximum_activities.sort_by! { |activity| activity.start_time }
     {distance: maximum_distance, activities: maximum_activities}
+  end
+
+  def load_activities activity_uris
+    @activities = Array.new
+    activity_uris.each do |activity_uri|
+      if AnalyzedActivity.analyzed? activity_uri
+        @activities << AnalyzedActivity.load(activity_uri)
+      else
+        if not AnalyzedActivity.analyzing? activity_uri
+          Resque.enqueue Analyzer, activity_uri, Settings.instance.to_hash
+        end
+        @activities << :analyzing
+      end
+    end
   end
 end

@@ -4,39 +4,40 @@ require_relative './factories/analyzed_activities'
 require_relative './rspec_helpers'
 
 require 'mock_redis'
+require 'json'
 
 describe AnalyzedActivity do
   Settings.instance.record_distances = [1000]
 
   describe "#records" do
     subject(:activity) { build :empty_activity, record_analyzer: mock("record_analyzer") }
-    it "should use the RecordAnalyzer to analize records"  do
+    it "should use the RecordAnalyzer to analyze records"  do
       activity.record_analyzer.should_receive :records
       activity.records
     end
   end
 
   describe "#to_json" do
-    subject(:activity) { FactoryGirl.build :empty_activity }
+    subject(:activity) { build :empty_activity }
     it "should serialize to json" do
-      activity.to_json.should === {uri:activity.uri, type:activity.type, start_time:activity.start_time, duration:0, distance:0, distance_vector:[], heart_rate:0, heart_rate_vector:[], calories:0, notes:"", gps_path:[], records:nil, trimp: 0.0}.to_json
+      activity.to_json.should == {uri: activity.uri, type: activity.type, start_time: activity.start_time.to_s, duration: 0, distance: 0, distance_vector: [], heart_rate: 0, heart_rate_vector: [], calories: 0, notes: "", gps_path: [], records: nil, trimp:  0.0}.to_json
     end
   end
 
   describe "#from_json" do
     it "should load empty activity from json" do
-      created_activity = FactoryGirl.build :empty_activity
-      serialized_activity = {uri:created_activity.uri, type:created_activity.type, start_time:created_activity.start_time, duration:0, distance:0, distance_vector:[], heart_rate:0, heart_rate_vector:[], calories:0, notes:"", gps_path:[], records: created_activity.records, trimp: created_activity.trimp}.to_json
-      created_activity.to_json.should eq serialized_activity
+      created_activity = build :empty_activity
+      serialized_activity = {uri: created_activity.uri, type: created_activity.type, start_time:  created_activity.start_time.to_s, duration:  0, distance: 0, distance_vector: [], heart_rate: 0, heart_rate_vector: [], calories: 0, notes: "", gps_path: [], records:  created_activity.records, trimp:  created_activity.trimp}.to_json
+      created_activity.to_json.should == serialized_activity
       loaded_activity = AnalyzedActivity.from_json serialized_activity
-      loaded_activity.to_json.should eq created_activity.to_json
+      loaded_activity.to_json.should == created_activity.to_json
     end
     it "should load filled activity" do
-      complex_activity = FactoryGirl.build :complex_activity
-      serialized_activity = {uri:complex_activity.uri, type: complex_activity.type ,start_time:complex_activity.start_time, duration:0, distance:0, distance_vector:complex_activity.distance_vector,heart_rate:0,heart_rate_vector:complex_activity.heart_rate_vector,calories:0,notes:"",gps_path:[], records: complex_activity.records, trimp: complex_activity.trimp}.to_json
-      complex_activity.to_json.should eq serialized_activity
+      complex_activity = build :complex_activity
+      serialized_activity = {uri: complex_activity.uri, type:  complex_activity.type ,start_time: complex_activity.start_time.to_s, duration: 0, distance: 0, distance_vector: complex_activity.distance_vector,heart_rate: 0,heart_rate_vector: complex_activity.heart_rate_vector,calories: 0,notes: "",gps_path: [], records:  complex_activity.records, trimp: complex_activity.trimp}.to_json
+      complex_activity.to_json.should == serialized_activity
       loaded_activity = AnalyzedActivity.from_json serialized_activity
-      loaded_activity.to_json.should eq complex_activity.to_json
+      loaded_activity.to_json.should == complex_activity.to_json
     end
   end
 

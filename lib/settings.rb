@@ -2,10 +2,10 @@ require 'singleton'
 
 class Settings
   include Singleton
-  attr_accessor :resting_heart_rate, :maximum_heart_rate, :gender, :record_distances
+  attr_accessor :resting_heart_rate, :maximum_heart_rate, :gender, :record_distances, :token
 
   def to_hash
-    {:resting_heart_rate => @resting_heart_rate, :maximum_heart_rate => @maximum_heart_rate, :gender => @gender, :record_distances => @record_distances}
+    {:resting_heart_rate => @resting_heart_rate, :maximum_heart_rate => @maximum_heart_rate, :gender => @gender, :record_distances => @record_distances, :token => @token}
   end
 
   def self.load_from_hash settings_hash
@@ -14,5 +14,6 @@ class Settings
     self.instance.maximum_heart_rate = symbol_hash[:maximum_heart_rate]
     self.instance.gender = symbol_hash[:gender].to_sym
     self.instance.record_distances = symbol_hash[:record_distances]
+    self.instance.token = symbol_hash[:token]
   end
 end
